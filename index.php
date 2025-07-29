@@ -82,6 +82,170 @@ include 'includes/header.php';
         <button class="cr-hero-nav cr-hero-next" aria-label="Next" onclick="crHeroScroll(1)"><span>&#10095;</span></button>
     </div>
     <style>
+    /* Product card original styles */
+    .product-card {
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+        transition: box-shadow 0.2s, transform 0.2s;
+        margin-bottom: 24px;
+        overflow: hidden;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        height: auto;
+        min-height: 0;
+        max-height: none;
+    }
+    .product-card:hover {
+        box-shadow: 0 6px 24px rgba(0,0,0,0.13);
+        transform: translateY(-4px) scale(1.01);
+    }
+    .product-image {
+        width: 100%;
+        height: 220px;
+        background: #f7f7f7;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        position: relative;
+    }
+    .product-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center;
+        display: block;
+        border-radius: 0;
+    }
+    .product-actions {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        z-index: 2;
+    }
+    .product-actions .btn {
+        background: rgba(255,255,255,0.9);
+        border: none;
+        border-radius: 50%;
+        width: 36px;
+        height: 36px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #333;
+        font-size: 1.1rem;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+        transition: background 0.2s;
+    }
+    .product-actions .btn:hover {
+        background: #f8e1e7;
+        color: #c2185b;
+    }
+    .product-badge {
+        position: absolute;
+        left: 10px;
+        top: 10px;
+        background: #c2185b;
+        color: #fff;
+        font-size: 0.85rem;
+        padding: 4px 12px;
+        border-radius: 16px;
+        z-index: 2;
+        font-weight: 500;
+    }
+    .badge-sale {
+        background: #ff9800;
+    }
+    .badge-new {
+        background: #43a047;
+    }
+    .product-info {
+        padding: 18px 16px 14px 16px;
+        flex: 1 1 auto;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+    }
+    .product-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-bottom: 8px;
+        color: #222;
+        line-height: 1.3;
+        min-height: 44px;
+    }
+    .product-title a {
+        color: inherit;
+        text-decoration: none;
+        transition: color 0.2s;
+    }
+    .product-title a:hover {
+        color: #c2185b;
+    }
+    .product-price {
+        font-size: 1.1rem;
+        font-weight: 500;
+        margin-bottom: 8px;
+        color: #c2185b;
+    }
+    .product-price .original-price {
+        color: #888;
+        text-decoration: line-through;
+        margin-left: 8px;
+        font-size: 0.98rem;
+    }
+    .product-rating {
+        margin-bottom: 10px;
+        color: #ffc107;
+        font-size: 1.05rem;
+    }
+    .product-rating .fa-star {
+        color: #ffc107;
+        opacity: 0.7;
+    }
+    .product-rating .fa-star.active {
+        opacity: 1;
+    }
+    .rating-count {
+        color: #888;
+        font-size: 0.95rem;
+        margin-left: 6px;
+    }
+    .add-to-cart {
+        background: #c2185b;
+        color: #fff;
+        border: none;
+        border-radius: 24px;
+        padding: 8px 22px;
+        font-size: 1rem;
+        font-weight: 500;
+        margin-top: 8px;
+        transition: background 0.2s;
+        cursor: pointer;
+    }
+    .add-to-cart:hover {
+        background: #a31545;
+    }
+    @media (max-width: 768px) {
+        .product-card {
+            min-height: 0;
+            max-height: none;
+        }
+        .product-image {
+            height: 140px;
+        }
+        .product-info {
+            padding: 12px 8px 10px 8px;
+        }
+        .product-title {
+            min-height: 36px;
+        }
+    }
     .crunchyroll-hero {
         position: relative;
         width: 100vw;
