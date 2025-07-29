@@ -3,6 +3,48 @@
 require_once __DIR__ . '/../config/database.php';
 
 /**
+ * Calculate cart totals (subtotal, discount, shipping, tax, total)
+ */
+function calculate_cart_total() {
+    $subtotal = 0;
+    $discount = 0;
+    $shipping = 0;
+    $tax = 0;
+    $total = 0;
+    if (isset($_SESSION['cart']) && is_array($_SESSION['cart'])) {
+        foreach ($_SESSION['cart'] as $item) {
+            $subtotal += $item['price'] * $item['quantity'];
+        }
+    }
+    // Example: apply 10% discount if subtotal > $200
+    if ($subtotal > 200) {
+        $discount = $subtotal * 0.10;
+    }
+    // Example: flat shipping $10 if subtotal < $100, else free
+    $shipping = ($subtotal > 0 && $subtotal < 100) ? 10 : 0;
+    // Example: 8% tax
+    $tax = ($subtotal - $discount) * 0.08;
+    $total = $subtotal - $discount + $shipping + $tax;
+    return [
+        'subtotal' => $subtotal,
+        'discount' => $discount,
+        'shipping' => $shipping,
+        'tax' => $tax,
+        'total' => $total
+    ];
+}
+
+/**
+ * Get all items in the cart
+ */
+function get_cart_items() {
+    if (isset($_SESSION['cart']) && is_array($_SESSION['cart'])) {
+        return $_SESSION['cart'];
+    }
+    return [];
+}
+
+/**
  * Clean input data to prevent XSS attacks
  */
 function clean_input($data) {

@@ -79,6 +79,22 @@
     justify-content: center;
     padding: 0;
 }
+.hero-section .glass-bg {
+    background: rgba(255, 255, 255, 0.18);
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.18);
+    backdrop-filter: blur(12px) saturate(160%);
+    -webkit-backdrop-filter: blur(12px) saturate(160%);
+    border-radius: 1.5rem;
+    border: 1px solid rgba(255,255,255,0.25);
+    padding: 2.5rem 2.5rem 2.5rem 2.5rem;
+    max-width: 520px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+}
 .hero-section .container,
 .hero-section .row,
 .hero-section .col-lg-6 {
@@ -225,18 +241,14 @@ include 'includes/header.php';
                 <?php foreach ($banners as $banner): ?>
                     <div class="swiper-slide" style="background-image: url('<?php echo htmlspecialchars($banner['image_url']); ?>');">
                         <div class="hero-content">
-                            <div class="container">
-                                <div class="row">
-                                    <div class="col-lg-6">
-                                        <h1 class="hero-title"><?php echo htmlspecialchars($banner['title']); ?></h1>
-                                        <?php if (!empty($banner['subtitle'])): ?>
-                                            <p class="hero-subtitle"><?php echo htmlspecialchars($banner['subtitle']); ?></p>
-                                        <?php endif; ?>
-                                        <?php if (!empty($banner['link'])): ?>
-                                            <a href="<?php echo htmlspecialchars($banner['link']); ?>" class="btn btn-primary btn-lg">Shop Now</a>
-                                        <?php endif; ?>
-                                    </div>
-                                </div>
+                            <div class="glass-bg">
+                                <h1 class="hero-title"><?php echo htmlspecialchars($banner['title']); ?></h1>
+                                <?php if (!empty($banner['subtitle'])): ?>
+                                    <p class="hero-subtitle"><?php echo htmlspecialchars($banner['subtitle']); ?></p>
+                                <?php endif; ?>
+                                <?php if (!empty($banner['link'])): ?>
+                                    <a href="<?php echo htmlspecialchars($banner['link']); ?>" class="btn btn-primary btn-lg">Shop Now</a>
+                                <?php endif; ?>
                             </div>
                         </div>
                     </div>
@@ -245,14 +257,10 @@ include 'includes/header.php';
                 <!-- Default hero slide -->
                 <div class="swiper-slide" style="background-image: url('assets/images/hero-bg.jpg');">
                     <div class="hero-content">
-                        <div class="container">
-                            <div class="row">
-                                <div class="col-lg-6">
-                                    <h1 class="hero-title">Welcome to Velvet Vogue</h1>
-                                    <p class="hero-subtitle">Discover the latest fashion trends and timeless elegance</p>
-                                    <a href="products.php" class="btn btn-primary btn-lg">Shop Now</a>
-                                </div>
-                            </div>
+                        <div class="glass-bg">
+                            <h1 class="hero-title">Welcome to Velvet Vogue</h1>
+                            <p class="hero-subtitle">Discover the latest fashion trends and timeless elegance</p>
+                            <a href="products.php" class="btn btn-primary btn-lg">Shop Now</a>
                         </div>
                     </div>
                 </div>
