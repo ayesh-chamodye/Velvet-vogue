@@ -1,9 +1,4 @@
 <?php
-// Start session if not already started
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
-
 // Database connection
 require_once __DIR__ . '/../config/database.php';
 

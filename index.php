@@ -1,3 +1,154 @@
+<style>
+// ...existing code up to banners array...
+.hero-section .swiper-slide::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; right: 0; bottom: 0;
+    background: linear-gradient(90deg, rgba(34,34,34,0.7) 0%, rgba(34,34,34,0.2) 60%, rgba(34,34,34,0) 100%);
+    z-index: 1;
+}
+.hero-section .swiper-pagination-bullets {
+    bottom: 30px !important;
+}
+.hero-section .swiper-pagination-bullet {
+    background: #fff;
+    opacity: 0.7;
+    width: 12px;
+    height: 12px;
+    margin: 0 6px !important;
+    border-radius: 50%;
+    transition: background 0.3s, opacity 0.3s;
+}
+.hero-section .swiper-pagination-bullet-active {
+    background: #ff9800;
+    opacity: 1;
+}
+.hero-section .swiper-button-next, .hero-section .swiper-button-prev {
+    color: #fff;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: rgba(0,0,0,0.3);
+    top: 50%;
+    transform: translateY(-50%);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    transition: background 0.2s;
+}
+.hero-section .swiper-button-next:hover, .hero-section .swiper-button-prev:hover {
+    background: rgba(255,152,0,0.8);
+}
+.hero-section .swiper-button-next:after, .hero-section .swiper-button-prev:after {
+    font-size: 1.7rem;
+    font-weight: bold;
+}
+/* Modern, robust styles for hero/banner section */
+.hero-section {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+}
+.hero-section .hero-slider {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+}
+.hero-section .hero-slide {
+    min-height: 380px;
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+.hero-section .hero-slide::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; right: 0; bottom: 0;
+    background: linear-gradient(90deg, rgba(34,34,34,0.7) 0%, rgba(34,34,34,0.2) 60%, rgba(34,34,34,0) 100%);
+    z-index: 1;
+}
+.hero-section .hero-content {
+    position: absolute;
+    z-index: 2;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+}
+.hero-section .container,
+.hero-section .row,
+.hero-section .col-lg-6 {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.hero-section .col-lg-6 {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+}
+.hero-section .hero-title {
+    color: #fff;
+    font-size: 2.5rem;
+    font-weight: 700;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    margin-bottom: 0.5rem;
+    text-align: center;
+    width: 100%;
+    display: block;
+    white-space: normal;
+}
+.hero-section .hero-subtitle {
+    color: #fff;
+    font-size: 1.25rem;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    margin-bottom: 1.5rem;
+    text-align: center;
+    width: 100%;
+    display: block;
+    white-space: normal;
+}
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+}
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+}
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+}
+.hero-section .btn.btn-primary {
+    margin-top: 1rem;
+    font-size: 1.1rem;
+    padding: 0.75rem 2rem;
+    border-radius: 2rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+@media (max-width: 991px) {
+    .hero-section .hero-title { font-size: 2rem; }
+    .hero-section .hero-subtitle { font-size: 1rem; }
+    .hero-section .hero-content { padding: 1.5rem 0; }
+}
+@media (max-width: 575px) {
+    .hero-section .hero-title { font-size: 1.3rem; }
+    .hero-section .hero-content { padding: 1rem 0; }
+}
+</style>
 <?php
 require_once 'config/database.php';
 require_once 'includes/functions.php';
@@ -43,318 +194,75 @@ if ($banners_result) {
 include 'includes/header.php';
 ?>
 
-<!-- Hero Section -->
+<style>
+/* Crunchyroll-style banner slider enhancements */
+.hero-section .hero-slider {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+}
+.hero-section .swiper {
+    width: 100%;
+    height: 50%;
+}
+.hero-section .swiper-slide {
+    min-height: 380px;
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    align-items: center;
+    position: relative;
+    transition: background-image 0.5s cubic-bezier(.4,0,.2,1);
+}
+/* ...rest of your CSS... */
+</style>
 
+<!-- Hero Section -->
 <section class="hero-section">
-    <div class="crunchyroll-hero">
-        <button class="cr-hero-nav cr-hero-prev" aria-label="Previous" onclick="crHeroScroll(-1)"><span>&#10094;</span></button>
-        <div class="cr-hero-track-wrapper">
-            <div class="cr-hero-track">
-                <?php
-                $hasBanners = !empty($banners);
-                $slides = $hasBanners ? $banners : [
-                    [
-                        'image_url' => 'assets/images/hero-bg.jpg',
-                        'title' => 'Welcome to Velvet Vogue',
-                        'subtitle' => 'Discover the latest fashion trends and timeless elegance',
-                        'link' => 'products.php'
-                    ]
-                ];
-                foreach ($slides as $banner):
-                    $img = !empty($banner['image_url']) ? htmlspecialchars($banner['image_url']) : 'assets/images/hero-bg.jpg';
-                ?>
-                <div class="cr-hero-slide">
-                    <img src="<?php echo $img; ?>" alt="<?php echo htmlspecialchars($banner['title']); ?>" class="cr-hero-img">
-                    <div class="cr-hero-overlay"></div>
-                    <div class="cr-hero-content">
-                        <h1 class="cr-hero-title"><?php echo htmlspecialchars($banner['title']); ?></h1>
-                        <?php if (!empty($banner['subtitle'])): ?>
-                            <p class="cr-hero-subtitle"><?php echo htmlspecialchars($banner['subtitle']); ?></p>
-                        <?php endif; ?>
-                        <?php if (!empty($banner['link'])): ?>
-                            <a href="<?php echo htmlspecialchars($banner['link']); ?>" class="btn btn-primary btn-lg">Shop Now</a>
-                        <?php endif; ?>
+    <div class="hero-slider swiper hero-swiper">
+        <div class="swiper-wrapper">
+            <?php if (!empty($banners)): ?>
+                <?php foreach ($banners as $banner): ?>
+                    <div class="swiper-slide" style="background-image: url('<?php echo htmlspecialchars($banner['image_url']); ?>');">
+                        <div class="hero-content">
+                            <div class="container">
+                                <div class="row">
+                                    <div class="col-lg-6">
+                                        <h1 class="hero-title"><?php echo htmlspecialchars($banner['title']); ?></h1>
+                                        <?php if (!empty($banner['subtitle'])): ?>
+                                            <p class="hero-subtitle"><?php echo htmlspecialchars($banner['subtitle']); ?></p>
+                                        <?php endif; ?>
+                                        <?php if (!empty($banner['link'])): ?>
+                                            <a href="<?php echo htmlspecialchars($banner['link']); ?>" class="btn btn-primary btn-lg">Shop Now</a>
+                                        <?php endif; ?>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <!-- Default hero slide -->
+                <div class="swiper-slide" style="background-image: url('assets/images/hero-bg.jpg');">
+                    <div class="hero-content">
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <h1 class="hero-title">Welcome to Velvet Vogue</h1>
+                                    <p class="hero-subtitle">Discover the latest fashion trends and timeless elegance</p>
+                                    <a href="products.php" class="btn btn-primary btn-lg">Shop Now</a>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <?php endforeach; ?>
-            </div>
+            <?php endif; ?>
         </div>
-        <button class="cr-hero-nav cr-hero-next" aria-label="Next" onclick="crHeroScroll(1)"><span>&#10095;</span></button>
+        <!-- Add Pagination and Navigation -->
+        <div class="swiper-pagination"></div>
+        <div class="swiper-button-next"></div>
+        <div class="swiper-button-prev"></div>
     </div>
-    <style>
-    /* Product card original styles */
-    .product-card {
-        background: #fff;
-        border-radius: 12px;
-        box-shadow: 0 2px 12px rgba(0,0,0,0.07);
-        transition: box-shadow 0.2s, transform 0.2s;
-        margin-bottom: 24px;
-        overflow: hidden;
-        position: relative;
-        display: flex;
-        flex-direction: column;
-        height: auto;
-        min-height: 0;
-        max-height: none;
-    }
-    .product-card:hover {
-        box-shadow: 0 6px 24px rgba(0,0,0,0.13);
-        transform: translateY(-4px) scale(1.01);
-    }
-    .product-image {
-        width: 100%;
-        height: 220px;
-        background: #f7f7f7;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        overflow: hidden;
-        position: relative;
-    }
-    .product-image img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        object-position: center;
-        display: block;
-        border-radius: 0;
-    }
-    .product-actions {
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-        z-index: 2;
-    }
-    .product-actions .btn {
-        background: rgba(255,255,255,0.9);
-        border: none;
-        border-radius: 50%;
-        width: 36px;
-        height: 36px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: #333;
-        font-size: 1.1rem;
-        box-shadow: 0 1px 4px rgba(0,0,0,0.08);
-        transition: background 0.2s;
-    }
-    .product-actions .btn:hover {
-        background: #f8e1e7;
-        color: #c2185b;
-    }
-    .product-badge {
-        position: absolute;
-        left: 10px;
-        top: 10px;
-        background: #c2185b;
-        color: #fff;
-        font-size: 0.85rem;
-        padding: 4px 12px;
-        border-radius: 16px;
-        z-index: 2;
-        font-weight: 500;
-    }
-    .badge-sale {
-        background: #ff9800;
-    }
-    .badge-new {
-        background: #43a047;
-    }
-    .product-info {
-        padding: 18px 16px 14px 16px;
-        flex: 1 1 auto;
-        display: flex;
-        flex-direction: column;
-        justify-content: flex-end;
-    }
-    .product-title {
-        font-size: 1.1rem;
-        font-weight: 600;
-        margin-bottom: 8px;
-        color: #222;
-        line-height: 1.3;
-        min-height: 44px;
-    }
-    .product-title a {
-        color: inherit;
-        text-decoration: none;
-        transition: color 0.2s;
-    }
-    .product-title a:hover {
-        color: #c2185b;
-    }
-    .product-price {
-        font-size: 1.1rem;
-        font-weight: 500;
-        margin-bottom: 8px;
-        color: #c2185b;
-    }
-    .product-price .original-price {
-        color: #888;
-        text-decoration: line-through;
-        margin-left: 8px;
-        font-size: 0.98rem;
-    }
-    .product-rating {
-        margin-bottom: 10px;
-        color: #ffc107;
-        font-size: 1.05rem;
-    }
-    .product-rating .fa-star {
-        color: #ffc107;
-        opacity: 0.7;
-    }
-    .product-rating .fa-star.active {
-        opacity: 1;
-    }
-    .rating-count {
-        color: #888;
-        font-size: 0.95rem;
-        margin-left: 6px;
-    }
-    .add-to-cart {
-        background: #c2185b;
-        color: #fff;
-        border: none;
-        border-radius: 24px;
-        padding: 8px 22px;
-        font-size: 1rem;
-        font-weight: 500;
-        margin-top: 8px;
-        transition: background 0.2s;
-        cursor: pointer;
-    }
-    .add-to-cart:hover {
-        background: #a31545;
-    }
-    @media (max-width: 768px) {
-        .product-card {
-            min-height: 0;
-            max-height: none;
-        }
-        .product-image {
-            height: 140px;
-        }
-        .product-info {
-            padding: 12px 8px 10px 8px;
-        }
-        .product-title {
-            min-height: 36px;
-        }
-    }
-    .crunchyroll-hero {
-        position: relative;
-        width: 100vw;
-        max-width: 100%;
-        overflow: hidden;
-        background: #111;
-        min-height: 500px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-    .cr-hero-track-wrapper {
-        overflow-x: hidden;
-        width: 100vw;
-        max-width: 100%;
-    }
-    .cr-hero-track {
-        display: flex;
-        transition: transform 0.6s cubic-bezier(.77,0,.18,1);
-        will-change: transform;
-    }
-    .cr-hero-slide {
-        min-width: 100vw;
-        max-width: 100vw;
-        height: 500px;
-        position: relative;
-        display: flex;
-        align-items: flex-end;
-        justify-content: flex-start;
-        overflow: hidden;
-    }
-    .cr-hero-img {
-        width: 100vw;
-        height: 500px;
-        object-fit: cover;
-        object-position: center;
-        position: absolute;
-        top: 0; left: 0;
-        z-index: 1;
-    }
-    .cr-hero-overlay {
-        position: absolute;
-        top: 0; left: 0; width: 100%; height: 100%;
-        background: linear-gradient(90deg, rgba(20,20,20,0.85) 0%, rgba(20,20,20,0.2) 60%, rgba(20,20,20,0.0) 100%);
-        z-index: 2;
-    }
-    .cr-hero-content {
-        position: relative;
-        z-index: 3;
-        color: #fff;
-        padding: 60px 40px 80px 60px;
-        max-width: 600px;
-    }
-    .cr-hero-title {
-        font-size: 2.8rem;
-        font-weight: bold;
-        margin-bottom: 1rem;
-        text-shadow: 0 2px 16px #000a;
-    }
-    .cr-hero-subtitle {
-        font-size: 1.3rem;
-        margin-bottom: 1.5rem;
-        text-shadow: 0 2px 8px #000a;
-    }
-    .cr-hero-nav {
-        position: absolute;
-        top: 50%;
-        transform: translateY(-50%);
-        background: rgba(0,0,0,0.5);
-        border: none;
-        color: #fff;
-        font-size: 2.5rem;
-        width: 56px;
-        height: 56px;
-        border-radius: 50%;
-        z-index: 10;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: background 0.2s;
-    }
-    .cr-hero-nav:hover {
-        background: rgba(0,0,0,0.8);
-    }
-    .cr-hero-prev { left: 24px; }
-    .cr-hero-next { right: 24px; }
-    @media (max-width: 768px) {
-        .cr-hero-content { padding: 30px 10px 40px 20px; }
-        .cr-hero-title { font-size: 1.5rem; }
-        .cr-hero-subtitle { font-size: 1rem; }
-        .cr-hero-slide, .cr-hero-img { height: 320px; min-width: 100vw; }
-    }
-    </style>
-    <script>
-    let crHeroIndex = 0;
-    function crHeroScroll(dir) {
-        const track = document.querySelector('.cr-hero-track');
-        const slides = document.querySelectorAll('.cr-hero-slide');
-        crHeroIndex += dir;
-        if (crHeroIndex < 0) crHeroIndex = slides.length - 1;
-        if (crHeroIndex >= slides.length) crHeroIndex = 0;
-        track.style.transform = `translateX(-${crHeroIndex * 100}vw)`;
-    }
-    // Optional: autoplay
-    setInterval(() => {
-        crHeroScroll(1);
-    }, 5000);
-    </script>
 </section>
 
 <!-- Categories Section -->
@@ -372,10 +280,25 @@ include 'includes/header.php';
                     <div class="col-lg-2 col-md-4 col-6 mb-4">
                         <div class="category-card">
                             <a href="products.php?category=<?php echo $category['id']; ?>">
-                                <div class="category-image">
-                                    <img src="<?php echo !empty($category['image_url']) ? htmlspecialchars($category['image_url']) : 'assets/images/categories/default.jpg'; ?>" alt="<?php echo htmlspecialchars($category['name']); ?>">
+                                <div class="d-flex align-items-center justify-content-center gap-2 py-3" style="gap:0.5rem;">
+                                    <?php
+                                    $cat_icons = [
+                                        'Dresses' => 'fa-person-dress',
+                                        'Tops' => 'fa-shirt',
+                                        'Bottoms' => 'fa-pants',
+                                        'Shoes' => 'fa-shoe-prints',
+                                        'Accessories' => 'fa-hat-cowboy',
+                                        'Bags' => 'fa-bag-shopping',
+                                        'Jackets' => 'fa-jacket',
+                                        'Kids' => 'fa-child',
+                                        'Men' => 'fa-person',
+                                        'Women' => 'fa-person-dress',
+                                    ];
+                                    $icon_class = isset($cat_icons[$category['name']]) ? $cat_icons[$category['name']] : 'fa-tags';
+                                    ?>
+                                    <i class="fa-solid <?php echo $icon_class; ?> fa-lg text-secondary"></i>
+                                    <h5 class="category-name mb-0"><?php echo htmlspecialchars($category['name']); ?></h5>
                                 </div>
-                                <h5 class="category-name"><?php echo htmlspecialchars($category['name']); ?></h5>
                             </a>
                         </div>
                     </div>
@@ -678,36 +601,30 @@ function updateCartCount() {
         });
 }
 
-// Initialize Swiper
+// Initialize Swiper for hero/banner (Crunchyroll style)
 document.addEventListener('DOMContentLoaded', function() {
-    // Hero Swiper
-    var heroSwiper = new Swiper('.hero-swiper', {
+    new Swiper('.hero-swiper', {
         slidesPerView: 1,
         loop: true,
-        effect: 'fade',
-        fadeEffect: {
-            crossFade: true
-        },
-        speed: 500, // Default fade speed for autoplay
+        effect: 'slide',
+        speed: 700,
         autoplay: {
-            delay: 2500,
+            delay: 5000,
             disableOnInteraction: false,
-        },
-        pagination: {
-            el: '.swiper-pagination',
-            clickable: true,
         },
         navigation: {
             nextEl: '.swiper-button-next',
             prevEl: '.swiper-button-prev',
         },
+        pagination: {
+            el: '.swiper-pagination',
+            clickable: true,
+        },
     });
-
-    // Use Swiper's default navigation and fade for all controls (fixes disappearing image bug)
-    // Featured Swiper
+    // Featured products swiper (unchanged)
     new Swiper('.featured-swiper', {
         slidesPerView: 1,
-        spaceBetween: 10,
+        spaceBetween: 30,
         pagination: {
             el: '.swiper-pagination',
             clickable: true,
