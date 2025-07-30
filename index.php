@@ -45,6 +45,35 @@ include 'includes/header.php';
 ?>
 
 <style>
+/* Ensure all product cards have the same height for perfect alignment */
+.product-card {
+    height: 420px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-sizing: border-box;
+}
+/* Ensure product images have a fixed height and default background */
+.product-image {
+    min-height: 220px;
+    max-height: 220px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #faf9fa;
+    border-radius: 1rem 1rem 0 0;
+    overflow: hidden;
+    position: relative;
+}
+.product-image img {
+    max-width: 100%;
+    max-height: 200px;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    display: block;
+    margin: 0 auto;
+}
 /* Crunchyroll-style banner slider enhancements */
 .hero-section .hero-slider {
     position: relative;
@@ -356,9 +385,9 @@ include 'includes/header.php';
             <div class="col-12 text-center mb-5">
                 <h2 class="section-title">Featured Products</h2>
                 <p class="section-subtitle">Handpicked favorites just for you</p>
+                <a href="products.php" class="btn btn-outline-primary mt-3">Show All Products</a>
             </div>
         </div>
-        
         <div class="swiper featured-swiper">
             <div class="swiper-wrapper">
                 <?php if (!empty($featured_products)): ?>
@@ -366,7 +395,7 @@ include 'includes/header.php';
                         <div class="swiper-slide">
                             <div class="product-card">
                                 <div class="product-image">
-                                    <img src="<?php echo !empty($product['primary_image']) ? htmlspecialchars($product['primary_image']) : 'assets/images/products/default.jpg'; ?>" alt="<?php echo htmlspecialchars($product['name']); ?>">
+                                    <img src="<?php echo !empty($product['primary_image']) ? htmlspecialchars($product['primary_image']) : 'assets/images/products/default.jpg'; ?>" alt="<?php echo htmlspecialchars($product['name']); ?>" onerror="this.onerror=null;this.src='assets/images/products/default.jpg';">
                                     <div class="product-actions">
                                         <?php if (is_logged_in()): ?>
                                             <a href="wishlist_add.php?product_id=<?php echo $product['id']; ?>" class="btn"><i class="fas fa-heart"></i></a>
@@ -413,7 +442,7 @@ include 'includes/header.php';
                         <div class="swiper-slide">
                             <div class="product-card">
                                 <div class="product-image">
-                                    <img src="assets/images/products/default.jpg" alt="Product <?php echo $i; ?>">
+                                    <img src="assets/images/products/default.jpg" alt="Product <?php echo $i; ?>" onerror="this.onerror=null;this.src='assets/images/products/default.jpg';">
                                     <div class="product-actions">
                                         <a href="#" class="btn"><i class="fas fa-heart"></i></a>
                                         <a href="#" class="btn"><i class="fas fa-eye"></i></a>
@@ -452,9 +481,9 @@ include 'includes/header.php';
             <div class="col-12 text-center mb-5">
                 <h2 class="section-title">New Arrivals</h2>
                 <p class="section-subtitle">Fresh styles, just landed</p>
+                <a href="products.php" class="btn btn-outline-primary mt-3">Show All Products</a>
             </div>
         </div>
-        
         <div class="row">
             <?php
             // Get new arrivals (latest products)
@@ -475,7 +504,7 @@ include 'includes/header.php';
                     <div class="col-md-3 col-6 mb-4">
                         <div class="product-card">
                             <div class="product-image">
-                                <img src="<?php echo !empty($product['primary_image']) ? htmlspecialchars($product['primary_image']) : 'assets/images/products/default.jpg'; ?>" alt="<?php echo htmlspecialchars($product['name']); ?>">
+                                <img src="<?php echo !empty($product['primary_image']) ? htmlspecialchars($product['primary_image']) : 'assets/images/products/default.jpg'; ?>" alt="<?php echo htmlspecialchars($product['name']); ?>" onerror="this.onerror=null;this.src='assets/images/products/default.jpg';">
                                 <div class="product-actions">
                                     <?php if (is_logged_in()): ?>
                                         <a href="wishlist_add.php?product_id=<?php echo $product['id']; ?>" class="btn"><i class="fas fa-heart"></i></a>
@@ -520,7 +549,7 @@ include 'includes/header.php';
                     <div class="col-md-3 col-6 mb-4">
                         <div class="product-card">
                             <div class="product-image">
-                                <img src="assets/images/products/default.jpg" alt="Product <?php echo $i; ?>">
+                                <img src="assets/images/products/default.jpg" alt="Product <?php echo $i; ?>" onerror="this.onerror=null;this.src='assets/images/products/default.jpg';">
                                 <div class="product-actions">
                                     <a href="#" class="btn"><i class="fas fa-heart"></i></a>
                                     <a href="#" class="btn"><i class="fas fa-eye"></i></a>
