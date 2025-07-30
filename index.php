@@ -1,4 +1,71 @@
+
+<?php
+require_once 'config/database.php';
+require_once 'includes/functions.php';
+
+// Get featured products
+$sql = "SELECT p.*, 
+        (SELECT image_url FROM product_images WHERE product_id = p.id AND is_primary = 1 LIMIT 1) as primary_image,
+        (SELECT AVG(rating) FROM reviews WHERE product_id = p.id AND status = 'approved') as avg_rating,
+        (SELECT COUNT(*) FROM reviews WHERE product_id = p.id AND status = 'approved') as review_count
+        FROM products p 
+        WHERE p.featured = 1 AND p.status = 'active' 
+        ORDER BY p.created_at DESC 
+        LIMIT 8";
+
+$featured_products = [];
+$result = mysqli_query($conn, $sql);
+if ($result) {
+    while ($row = mysqli_fetch_assoc($result)) {
+        $featured_products[] = $row;
+    }
+}
+
+// Get categories for navigation
+$categories_sql = "SELECT * FROM categories WHERE status = 'active' AND parent_id IS NULL ORDER BY name LIMIT 6";
+$categories_result = mysqli_query($conn, $categories_sql);
+$categories = [];
+if ($categories_result) {
+    while ($row = mysqli_fetch_assoc($categories_result)) {
+        $categories[] = $row;
+    }
+}
+
+// Get banners
+$banners_sql = "SELECT * FROM banners WHERE status = 'active' AND (start_date IS NULL OR start_date <= CURDATE()) AND (end_date IS NULL OR end_date >= CURDATE()) ORDER BY id DESC LIMIT 3";
+$banners_result = mysqli_query($conn, $banners_sql);
+$banners = [];
+if ($banners_result) {
+    while ($row = mysqli_fetch_assoc($banners_result)) {
+        $banners[] = $row;
+    }
+}
+
+include 'includes/header.php';
+?>
+
 <style>
+/* Crunchyroll-style banner slider enhancements */
+.hero-section .hero-slider {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+}
+.hero-section .swiper {
+    width: 100%;
+    height: 50%;
+}
+.hero-section .swiper-slide {
+    min-height: 380px;
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    align-items: center;
+    position: relative;
+    transition: background-image 0.5s cubic-bezier(.4,0,.2,1);
+}
+/* ...rest of your CSS... */
+
 // ...existing code up to banners array...
 .hero-section .swiper-slide::before {
     content: '';
@@ -20,7 +87,7 @@
     transition: background 0.3s, opacity 0.3s;
 }
 .hero-section .swiper-pagination-bullet-active {
-    background: #ff9800;
+    background: #9c27b0;
     opacity: 1;
 }
 .hero-section .swiper-button-next, .hero-section .swiper-button-prev {
@@ -35,7 +102,7 @@
     transition: background 0.2s;
 }
 .hero-section .swiper-button-next:hover, .hero-section .swiper-button-prev:hover {
-    background: rgba(255,152,0,0.8);
+    background: rgba(153, 0, 255, 0.8);
 }
 .hero-section .swiper-button-next:after, .hero-section .swiper-button-prev:after {
     font-size: 1.7rem;
@@ -80,7 +147,7 @@
     padding: 0;
 }
 .hero-section .glass-bg {
-    background: rgba(255, 255, 255, 0.18);
+    background: rgba(27, 26, 26, 0.38);
     box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.18);
     backdrop-filter: blur(12px) saturate(160%);
     -webkit-backdrop-filter: blur(12px) saturate(160%);
@@ -164,73 +231,7 @@
     .hero-section .hero-title { font-size: 1.3rem; }
     .hero-section .hero-content { padding: 1rem 0; }
 }
-</style>
-<?php
-require_once 'config/database.php';
-require_once 'includes/functions.php';
 
-// Get featured products
-$sql = "SELECT p.*, 
-        (SELECT image_url FROM product_images WHERE product_id = p.id AND is_primary = 1 LIMIT 1) as primary_image,
-        (SELECT AVG(rating) FROM reviews WHERE product_id = p.id AND status = 'approved') as avg_rating,
-        (SELECT COUNT(*) FROM reviews WHERE product_id = p.id AND status = 'approved') as review_count
-        FROM products p 
-        WHERE p.featured = 1 AND p.status = 'active' 
-        ORDER BY p.created_at DESC 
-        LIMIT 8";
-
-$featured_products = [];
-$result = mysqli_query($conn, $sql);
-if ($result) {
-    while ($row = mysqli_fetch_assoc($result)) {
-        $featured_products[] = $row;
-    }
-}
-
-// Get categories for navigation
-$categories_sql = "SELECT * FROM categories WHERE status = 'active' AND parent_id IS NULL ORDER BY name LIMIT 6";
-$categories_result = mysqli_query($conn, $categories_sql);
-$categories = [];
-if ($categories_result) {
-    while ($row = mysqli_fetch_assoc($categories_result)) {
-        $categories[] = $row;
-    }
-}
-
-// Get banners
-$banners_sql = "SELECT * FROM banners WHERE status = 'active' AND (start_date IS NULL OR start_date <= CURDATE()) AND (end_date IS NULL OR end_date >= CURDATE()) ORDER BY id DESC LIMIT 3";
-$banners_result = mysqli_query($conn, $banners_sql);
-$banners = [];
-if ($banners_result) {
-    while ($row = mysqli_fetch_assoc($banners_result)) {
-        $banners[] = $row;
-    }
-}
-
-include 'includes/header.php';
-?>
-
-<style>
-/* Crunchyroll-style banner slider enhancements */
-.hero-section .hero-slider {
-    position: relative;
-    width: 100%;
-    overflow: hidden;
-}
-.hero-section .swiper {
-    width: 100%;
-    height: 50%;
-}
-.hero-section .swiper-slide {
-    min-height: 380px;
-    background-size: cover;
-    background-position: center;
-    display: flex;
-    align-items: center;
-    position: relative;
-    transition: background-image 0.5s cubic-bezier(.4,0,.2,1);
-}
-/* ...rest of your CSS... */
 </style>
 
 <!-- Hero Section -->
