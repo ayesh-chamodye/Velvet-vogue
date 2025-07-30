@@ -70,7 +70,7 @@ require_once 'functions.php';
                     </a>
                 </div>
                 <div class="col-md-5 d-none d-md-block">
-                    <form action="products.php" method="GET" class="search-form">
+                    <form action="search.php" method="GET" class="search-form">
                         <div class="input-group">
                             <input type="text" name="q" class="form-control" placeholder="Search for products..." required>
                             <button type="submit" class="btn btn-dark"><i class="fas fa-search"></i></button>
@@ -142,7 +142,7 @@ require_once 'functions.php';
                     </li>
                 </ul>
                 <div class="d-flex d-md-none mt-3">
-                    <form action="products.php" method="GET" class="search-form w-100">
+                    <form action="search.php" method="GET" class="search-form w-100">
                         <div class="input-group">
                             <input type="text" name="q" class="form-control" placeholder="Search for products..." required>
                             <button type="submit" class="btn btn-dark"><i class="fas fa-search"></i></button>

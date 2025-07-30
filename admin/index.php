@@ -182,8 +182,8 @@ include 'includes/header.php';
                         </div>
                     </div>
                     <div>
-                        <div class="small text-gray-500"><?php echo htmlspecialchars($product['name']); ?></div>
-                        <div class="font-weight-bold">Stock: <?php echo $product['stock_quantity']; ?></div>
+                        <div class="small text-gray-500">&nbsp;&nbsp;<?php echo htmlspecialchars($product['name']); ?></div>
+                        <div class="font-weight-bold">&nbsp;&nbsp;Stock: <?php echo $product['stock']; ?></div>
                     </div>
                 </div>
                 <?php endwhile; ?>
