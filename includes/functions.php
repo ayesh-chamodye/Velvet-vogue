@@ -2,6 +2,58 @@
 // Database connection
 require_once __DIR__ . '/../config/database.php';
 
+
+/**
+ * Register a new user
+ * @param string $first_name
+ * @param string $last_name
+ * @param string $username
+ * @param string $email
+ * @param string $password (plain text)
+ * @return int|false User ID on success, false on failure
+ */
+function register_user($first_name, $last_name, $username, $email, $password) {
+    global $conn;
+    $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+    $sql = "INSERT INTO users (first_name, last_name, username, email, password, role, status) VALUES (?, ?, ?, ?, ?, 'user', 'active')";
+    $stmt = mysqli_prepare($conn, $sql);
+    if (!$stmt) return false;
+    mysqli_stmt_bind_param($stmt, "sssss", $first_name, $last_name, $username, $email, $hashed_password);
+    if (mysqli_stmt_execute($stmt)) {
+        return mysqli_insert_id($conn);
+    }
+    return false;
+}
+/**
+ * Authenticate user by username/email and password
+ * @param string $username Username or email
+ * @param string $password Plain password
+ * @param bool $remember Remember me (optional)
+ * @return array|false User array on success, false on failure
+ */
+function login_user($username, $password, $remember = false) {
+    global $conn;
+    // Search by username or email
+    $sql = "SELECT * FROM users WHERE (username = ? OR email = ?) AND status = 'active' LIMIT 1";
+    $stmt = mysqli_prepare($conn, $sql);
+    if (!$stmt) return false;
+    mysqli_stmt_bind_param($stmt, "ss", $username, $username);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+    if ($result && $user = mysqli_fetch_assoc($result)) {
+        // Verify password (assume password is hashed)
+        if (password_verify($password, $user['password'])) {
+            // Set session
+            $_SESSION['user_id'] = $user['id'];
+            $_SESSION['username'] = $user['username'];
+            $_SESSION['user_role'] = $user['role'];
+            // Optionally set remember me cookie (not implemented here)
+            return $user;
+        }
+    }
+    return false;
+}
+
 /**
  * Calculate cart totals (subtotal, discount, shipping, tax, total)
  */
