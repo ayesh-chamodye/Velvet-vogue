@@ -40,8 +40,8 @@ $recent_orders = mysqli_query($conn, "
 // Low stock products
 $low_stock = mysqli_query($conn, "
     SELECT * FROM products 
-    WHERE stock_quantity <= 10 
-    ORDER BY stock_quantity ASC 
+    WHERE stock <= 10 
+    ORDER BY stock ASC 
     LIMIT 5
 ");
 
