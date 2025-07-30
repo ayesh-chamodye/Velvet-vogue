@@ -177,8 +177,23 @@ include 'includes/header.php';
                 <?php while ($product = mysqli_fetch_assoc($low_stock)): ?>
                 <div class="d-flex align-items-center mb-3">
                     <div class="mr-3">
-                        <div class="icon-circle bg-warning">
+                        <div class="icon-circle bg-warning mb-2">
                             <i class="fas fa-exclamation-triangle text-white"></i>
+                        </div>
+                        <div class="d-flex flex-wrap">
+                            <?php 
+                            if (function_exists('get_product_images')) {
+                                $images = get_product_images($product['id']);
+                                if (!empty($images)) {
+                                    foreach ($images as $img) {
+                                        $img_path = !empty($img['image_url']) && file_exists('../' . $img['image_url']) ? '../' . $img['image_url'] : '../assets/images/default-product.jpg';
+                                        echo '<img src="' . $img_path . '" alt="Product" style="width:32px; height:32px; object-fit:cover; border-radius:4px; margin-right:2px;">';
+                                    }
+                                } else {
+                                    echo '<img src="../assets/images/default-product.jpg" alt="Product" style="width:32px; height:32px; object-fit:cover; border-radius:4px;">';
+                                }
+                            }
+                            ?>
                         </div>
                     </div>
                     <div>

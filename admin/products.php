@@ -33,17 +33,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $filename = uniqid() . '.' . $file_extension;
                     $image_path = 'uploads/products/' . $filename;
                     
-                    if (move_uploaded_file($_FILES['image']['tmp_name'], $upload_dir . $filename)) {
-                        $sql = "INSERT INTO products (name, description, price, category_id, stock_quantity, image_path, status, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, NOW())";
-                        $stmt = mysqli_prepare($conn, $sql);
-                        mysqli_stmt_bind_param($stmt, "ssdiiiss", $name, $description, $price, $category_id, $stock_quantity, $image_path, $status);
-                        
-                        if (mysqli_stmt_execute($stmt)) {
-                            $success_message = "Product added successfully!";
-                        } else {
-                            $error_message = "Error adding product.";
-                        }
+                    move_uploaded_file($_FILES['image']['tmp_name'], $upload_dir . $filename);
+                }
+                
+                $sql = "INSERT INTO products (name, description, price, category_id, stock_quantity, status, created_at) VALUES (?, ?, ?, ?, ?, ?, NOW())";
+                $stmt = mysqli_prepare($conn, $sql);
+                mysqli_stmt_bind_param($stmt, "ssdiis", $name, $description, $price, $category_id, $stock_quantity, $status);
+                
+                if (mysqli_stmt_execute($stmt)) {
+                    $success_message = "Product added successfully!";
+                    
+                    // After insert, if image uploaded, insert into product_images
+                    if ($image_path) {
+                        $product_id = mysqli_insert_id($conn);
+                        $sql_img = "INSERT INTO product_images (product_id, image_url, is_primary) VALUES (?, ?, 1)";
+                        $stmt_img = mysqli_prepare($conn, $sql_img);
+                        mysqli_stmt_bind_param($stmt_img, "is", $product_id, $image_path);
+                        mysqli_stmt_execute($stmt_img);
                     }
+                } else {
+                    $error_message = "Error adding product.";
                 }
                 break;
                 
@@ -63,18 +72,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             case 'delete':
                 $product_id = (int)$_POST['product_id'];
                 
-                // Get image path to delete file
-                $sql = "SELECT image_path FROM products WHERE id = ?";
+                // Delete from product_images
+                $sql = "DELETE FROM product_images WHERE product_id = ?";
                 $stmt = mysqli_prepare($conn, $sql);
                 mysqli_stmt_bind_param($stmt, "i", $product_id);
                 mysqli_stmt_execute($stmt);
-                $result = mysqli_stmt_get_result($stmt);
-                $product = mysqli_fetch_assoc($result);
                 
-                if ($product && file_exists('../' . $product['image_path'])) {
-                    unlink('../' . $product['image_path']);
-                }
-                
+                // Delete product
                 $sql = "DELETE FROM products WHERE id = ?";
                 $stmt = mysqli_prepare($conn, $sql);
                 mysqli_stmt_bind_param($stmt, "i", $product_id);
@@ -182,14 +186,20 @@ include 'includes/header.php';
                     <?php while ($product = mysqli_fetch_assoc($products)): ?>
                         <tr>
                             <td>
-                                <img src="../<?php echo $product['image_path']; ?>" alt="Product" style="width: 50px; height: 50px; object-fit: cover;">
+                                <?php 
+                                    $images = function_exists('get_product_images') ? get_product_images($product['id']) : [];
+                                    $img_path = (!empty($images) && !empty($images[0]['image_url']) && file_exists('../' . $images[0]['image_url']))
+                                        ? '../' . $images[0]['image_url']
+                                        : '../assets/images/default-product.jpg';
+                                ?>
+                                <img src="<?php echo $img_path; ?>" alt="Product" style="width: 50px; height: 50px; object-fit: cover;">
                             </td>
                             <td><?php echo htmlspecialchars($product['name']); ?></td>
                             <td><?php echo htmlspecialchars($product['category_name']); ?></td>
                             <td>$<?php echo number_format($product['price'], 2); ?></td>
                             <td>
-                                <span class="badge <?php echo $product['stock_quantity'] <= 10 ? 'bg-danger' : 'bg-success'; ?>">
-                                    <?php echo $product['stock_quantity']; ?>
+                                <span class="badge <?php echo $product['stock'] <= 10 ? 'bg-danger' : 'bg-success'; ?>">
+                                    <?php echo $product['stock']; ?>
                                 </span>
                             </td>
                             <td>
@@ -214,6 +224,80 @@ include 'includes/header.php';
         </div>
     </div>
 </div>
+
+<!-- Edit & Delete Modals for Each Product -->
+<?php
+// Reset products result pointer and fetch all products again for modals
+mysqli_data_seek($products, 0);
+while ($product = mysqli_fetch_assoc($products)):
+?>
+<!-- Edit Product Modal -->
+<div class="modal fade" id="editProductModal<?php echo $product['id']; ?>" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <form method="POST" enctype="multipart/form-data">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Product</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" name="action" value="edit">
+                    <input type="hidden" name="product_id" value="<?php echo $product['id']; ?>">
+                    <div class="mb-3">
+                        <label class="form-label">Product Name</label>
+                        <input type="text" class="form-control" name="name" value="<?php echo htmlspecialchars($product['name']); ?>" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Description</label>
+                        <textarea class="form-control" name="description" rows="3" required><?php echo htmlspecialchars($product['description']); ?></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Price</label>
+                        <input type="number" class="form-control" name="price" step="0.01" value="<?php echo $product['price']; ?>" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Stock</label>
+                        <input type="number" class="form-control" name="stock_quantity" value="<?php echo $product['stock']; ?>" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Status</label>
+                        <select class="form-select" name="status">
+                            <option value="active" <?php echo $product['status'] == 'active' ? 'selected' : ''; ?>>Active</option>
+                            <option value="inactive" <?php echo $product['status'] == 'inactive' ? 'selected' : ''; ?>>Inactive</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-purple">Update Product</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!-- Delete Product Modal -->
+<div class="modal fade" id="deleteModal<?php echo $product['id']; ?>" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="POST">
+                <div class="modal-header">
+                    <h5 class="modal-title">Delete Product</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" name="action" value="delete">
+                    <input type="hidden" name="product_id" value="<?php echo $product['id']; ?>">
+                    <p>Are you sure you want to delete the product "<?php echo htmlspecialchars($product['name']); ?>"?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<?php endwhile; ?>
 
 <!-- Add Product Modal -->
 <div class="modal fade" id="addProductModal" tabindex="-1">
