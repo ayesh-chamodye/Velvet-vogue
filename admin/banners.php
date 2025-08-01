@@ -16,12 +16,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             case 'add':
                 $title = clean_input($_POST['title']);
                 $subtitle = clean_input($_POST['subtitle']);
-                $link_url = clean_input($_POST['link_url']);
+                $link = clean_input($_POST['link']);
                 $status = clean_input($_POST['status']);
                 $sort_order = (int)$_POST['sort_order'];
                 
                 // Handle image upload
-                $image_path = '';
+                $image_url = '';
                 if (isset($_FILES['image']) && $_FILES['image']['error'] === 0) {
                     $upload_dir = '../uploads/banners/';
                     if (!file_exists($upload_dir)) {
@@ -30,12 +30,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     
                     $file_extension = pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION);
                     $filename = uniqid() . '.' . $file_extension;
-                    $image_path = 'uploads/banners/' . $filename;
+                    $image_url = 'uploads/banners/' . $filename;
                     
                     if (move_uploaded_file($_FILES['image']['tmp_name'], $upload_dir . $filename)) {
-                        $sql = "INSERT INTO banners (title, subtitle, image_path, link_url, status, sort_order, created_at) VALUES (?, ?, ?, ?, ?, ?, NOW())";
+                        $sql = "INSERT INTO banners (title, subtitle, image_url, link, status, sort_order, created_at) VALUES (?, ?, ?, ?, ?, ?, NOW())";
                         $stmt = mysqli_prepare($conn, $sql);
-                        mysqli_stmt_bind_param($stmt, "sssssi", $title, $subtitle, $image_path, $link_url, $status, $sort_order);
+                        mysqli_stmt_bind_param($stmt, "sssssi", $title, $subtitle, $image_url, $link, $status, $sort_order);
                         
                         if (mysqli_stmt_execute($stmt)) {
                             $success_message = "Banner added successfully!";
@@ -63,15 +63,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $banner_id = (int)$_POST['banner_id'];
                 
                 // Get image path to delete file
-                $sql = "SELECT image_path FROM banners WHERE id = ?";
+                $sql = "SELECT image_url FROM banners WHERE id = ?";
                 $stmt = mysqli_prepare($conn, $sql);
                 mysqli_stmt_bind_param($stmt, "i", $banner_id);
                 mysqli_stmt_execute($stmt);
                 $result = mysqli_stmt_get_result($stmt);
                 $banner = mysqli_fetch_assoc($result);
                 
-                if ($banner && file_exists('../' . $banner['image_path'])) {
-                    unlink('../' . $banner['image_path']);
+                if ($banner && file_exists('../' . $banner['image_url'])) {
+                    unlink('../' . $banner['image_url']);
                 }
                 
                 $sql = "DELETE FROM banners WHERE id = ?";
@@ -142,11 +142,20 @@ $banners = mysqli_query($conn, $sql);
                                     <?php while ($banner = mysqli_fetch_assoc($banners)): ?>
                                         <tr>
                                             <td>
-                                                <img src="../<?php echo $banner['image_path']; ?>" alt="Banner" style="width: 80px; height: 40px; object-fit: cover;">
+                                                <?php 
+                                                    $img_path = (!empty($banner['image_url']) && file_exists('../' . $banner['image_url']))
+                                                        ? '../' . $banner['image_url']
+                                                        : '../assets/images/default-banner.jpg';
+                                                ?>
+                                                <img src="<?php echo $img_path; ?>" alt="Banner" style="width: 80px; height: 40px; object-fit: cover;">
                                             </td>
                                             <td><?php echo htmlspecialchars($banner['title']); ?></td>
                                             <td><?php echo htmlspecialchars($banner['subtitle']); ?></td>
-                                            <td><?php echo htmlspecialchars($banner['link_url']); ?></td>
+                                            <td>
+                                                <a href="<?php echo isset($banner['link']) ? htmlspecialchars($banner['link']) : '#'; ?>" target="_blank">
+                                                    <?php echo htmlspecialchars($banner['link']); ?>
+                                                </a>
+                                            </td>
                                             <td><?php echo $banner['sort_order']; ?></td>
                                             <td>
                                                 <span class="badge <?php echo $banner['status'] == 'active' ? 'bg-success' : 'bg-secondary'; ?>">
@@ -161,6 +170,28 @@ $banners = mysqli_query($conn, $sql);
                                                     <button class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteModal<?php echo $banner['id']; ?>">
                                                         <i class="fas fa-trash"></i>
                                                     </button>
+                                                </div>
+                                                <!-- Delete Modal -->
+                                                <div class="modal fade" id="deleteModal<?php echo $banner['id']; ?>" tabindex="-1" aria-labelledby="deleteModalLabel<?php echo $banner['id']; ?>" aria-hidden="true">
+                                                    <div class="modal-dialog">
+                                                        <div class="modal-content">
+                                                            <form method="POST">
+                                                                <div class="modal-header">
+                                                                    <h5 class="modal-title" id="deleteModalLabel<?php echo $banner['id']; ?>">Delete Banner</h5>
+                                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                                </div>
+                                                                <div class="modal-body">
+                                                                    Are you sure you want to delete this banner?
+                                                                </div>
+                                                                <div class="modal-footer">
+                                                                    <input type="hidden" name="action" value="delete">
+                                                                    <input type="hidden" name="banner_id" value="<?php echo $banner['id']; ?>">
+                                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                                                    <button type="submit" class="btn btn-danger">Delete</button>
+                                                                </div>
+                                                            </form>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </td>
                                         </tr>
@@ -199,7 +230,7 @@ $banners = mysqli_query($conn, $sql);
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Link URL</label>
-                            <input type="url" class="form-control" name="link_url">
+                            <input type="url" class="form-control" name="link">
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Sort Order</label>
