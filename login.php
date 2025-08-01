@@ -1,6 +1,10 @@
 <?php
 // Include functions
 require_once 'includes/functions.php';
+require_once 'config/database.php';
+
+// Start session
+session_start();
 
 // Check if user is already logged in
 if (is_logged_in()) {
@@ -28,9 +32,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     
     // If no errors, attempt to login
     if (empty($errors)) {
-        $user = login_user($username, $password, $remember);
+        $sql = "SELECT * FROM users WHERE username = ? AND role = 'customer' LIMIT 1";
+        $stmt = mysqli_prepare($conn, $sql);
+        mysqli_stmt_bind_param($stmt, "s", $username);
+        mysqli_stmt_execute($stmt);
+        $result = mysqli_stmt_get_result($stmt);
+        $user = mysqli_fetch_assoc($result);
         
-        if ($user) {
+        if ($user && password_verify($password, $user['password'])) {
+            // Set user session
+            $_SESSION['user_id'] = $user['id'];
+            $_SESSION['username'] = $user['username'];
+            $_SESSION['user_logged_in'] = true;
+            
             // Redirect based on user role
             if ($user['role'] === 'admin') {
                 redirect('admin/index.php');
